@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Market Option</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0e17;
+            --secondary: #1a1f2e;
+            --accent: #00d4ff;
+            --accent-dark: #0099cc;
+            --text: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --success: #00cc88;
+            --warning: #ffaa00;
+            --danger: #ff3366;
+            --card-bg: rgba(20, 25, 40, 0.8);
+            --border: rgba(0, 212, 255, 0.2);
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 20%),
+                linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(10, 14, 23, 0.9), rgba(26, 31, 46, 0.9));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite linear;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .login-box {
+            background-color: rgba(20, 25, 40, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .login-form .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            border: none;
+            border-radius: 10px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            padding-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(to right, var(--danger), #ff6699);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.3);
+        }
+
+        .market-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .position-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .position-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 212, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .position-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent), transparent);
+        }
+
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .position-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .position-count {
+            background-color: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .position-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .position-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-top: 15px;
+        }
+
+        /* Players Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--accent);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: calc(90vh - 100px);
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .player-card {
+            background-color: rgba(30, 35, 50, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .player-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .player-ovr {
+            background: linear-gradient(135deg, #ffaa00, #ff5500);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .player-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .player-age, .player-club {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .player-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+            text-align: right;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .buy-btn, .add-to-club-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .buy-btn {
+            background: linear-gradient(to right, var(--success), #00aa66);
+            color: white;
+        }
+
+        .add-to-club-btn {
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            color: white;
+        }
+
+        .buy-btn:hover, .add-to-club-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* My Club Section */
+        .my-club-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .club-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .add-player-btn {
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .add-player-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .club-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 150px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .club-players {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .club-player-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .club-player-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .club-player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .club-player-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .club-player-position {
+            background-color: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .club-player-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .club-player-ovr {
+            font-size: 1.2rem;
+            color: var(--warning);
+            font-weight: 700;
+        }
+
+        .club-player-age, .club-player-value {
+            color: var(--text-secondary);
+        }
+
+        .club-player-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: linear-gradient(to right, var(--warning), #ff8800);
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(to right, var(--danger), #ff3366);
+            color: white;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Modal */
+        .form-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .form-content {
+            background-color: var(--card-bg);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .save-btn, .cancel-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-btn {
+            background: linear-gradient(to right, var(--success), #00aa66);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: linear-gradient(to right, #666, #888);
+            color: white;
+        }
+
+        .save-btn:hover, .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 30px;
+                margin: 0 20px;
+            }
+            
+            .market-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .club-players {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Animation classes */
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            max-width: 400px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(to right, var(--success), #00aa66);
+            border-left: 5px solid #00aa66;
+        }
+
+        .notification.error {
+            background: linear-gradient(to right, var(--danger), #ff3366);
+            border-left: 5px solid #ff3366;
+        }
+
+        .notification.info {
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            border-left: 5px solid var(--accent-dark);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+        }
+        
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="login-header">
+                <h1><i class="fas fa-futbol"></i> TRANSFER MARKET</h1>
+                <p>Masukkan sandi untuk mengakses sistem</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <label for="password">SANDI AKSES</label>
+                    <div class="password-container">
+                        <input type="password" id="password" placeholder="Masukkan sandi" autocomplete="off">
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> MASUK
+                </button>
+                <div class="error-message" id="errorMessage"></div>
+            </form>
+            <div style="margin-top: 30px; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                <p>Hint: Sandi adalah "Hala Madrid" (case insensitive)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard container" id="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-futbol"></i>
+                </div>
+                <h1>TRANSFER MARKET OPTION</h1>
+            </div>
+            <div class="user-info">
+                <div>
+                    <div style="font-weight: 700; color: var(--accent);">MANAGER</div>
+                    <div style="color: var(--text-secondary);">Real Madrid FC</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
+            </div>
+        </div>
+
+        <!-- Transfer Market Selection -->
+        <div class="market-selector" id="marketSelector">
+            <!-- Position cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- My Club Section -->
+        <div class="my-club-section">
+            <div class="section-title">
+                <i class="fas fa-users"></i> KLUB SAYA
+            </div>
+            
+            <div class="club-controls">
+                <button class="add-player-btn" id="addPlayerBtn">
+                    <i class="fas fa-plus-circle"></i> TAMBAH PEMAIN BARU
+                </button>
+                
+                <div class="club-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalPlayers">0</div>
+                        <div class="stat-label">Total Pemain</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgOVR">0</div>
+                        <div class="stat-label">Rata-rata OVR</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalValue">0</div>
+                        <div class="stat-label">Total Nilai (JT)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Bar for Club Players -->
+            <div class="search-container">
+                <input type="text" class="search-input" id="clubSearch" placeholder="Cari pemain di klub...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <div class="club-players" id="clubPlayers">
+                <!-- Club players will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-logo">TRANSFER MARKET OPTION</div>
+            <p>Sistem Manajemen Transfer Pemain Sepak Bola © 2023</p>
+            <p>Gunakan tombol Enter untuk navigasi cepat | Geser untuk melihat lebih banyak data</p>
+        </div>
+    </div>
+
+    <!-- Players Modal -->
+    <div class="modal-overlay" id="playersModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalPositionTitle">PEMAIN</h2>
+                <button class="close-modal" id="closePlayersModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" class="search-input" id="playerSearch" placeholder="Cari pemain...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <!-- Filter Buttons -->
+                <div class="filter-buttons" id="priceFilters">
+                    <button class="filter-btn active" data-filter="all">Semua</button>
+                    <button class="filter-btn" data-filter="20-30">20-30 JT</button>
+                    <button class="filter-btn" data-filter="30-35">30-35 JT</button>
+                    <button class="filter-btn" data-filter="35-40">35-40 JT</button>
+                    <button class="filter-btn" data-filter="40+">40+ JT</button>
+                </div>
+                
+                <div class="players-grid" id="playersGrid">
+                    <!-- Players will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Player Form Modal -->
+    <div class="form-modal" id="playerFormModal">
+        <div class="form-content">
+            <h2 class="form-title" id="formModalTitle">TAMBAH PEMAIN BARU</h2>
+            <form id="playerForm">
+                <div class="form-group">
+                    <label for="formPlayerName">Nama Pemain</label>
+                    <input type="text" id="formPlayerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="formPlayerPosition">Posisi</label>
+                    <select id="formPlayerPosition" required>
+                        <option value="">Pilih Posisi</option>
+                        <option value="GK">Kiper (GK)</option>
+                        <option value="RB">Bek Kanan (RB)</option>
+                        <option value="CB">Bek Tengah (CB)</option>
+                        <option value="LB">Bek Kiri (LB)</option>
+                        <option value="CDM">Gelandang Bertahan (CDM)</option>
+                        <option value="CM">Gelandang Tengah (CM)</option>
+                        <option value="CAM">Gelandang Serang (CAM)</option>
+                        <option value="RW">Sayap Kanan (RW)</option>
+                        <option value="LW">Sayap Kiri (LW)</option>
+                        <option value="CF">Striker (CF)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="formPlayerOVR">Overall (OVR)</label>
+                    <input type="number" id="formPlayerOVR" min="50" max="99" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="formPlayerAge">Usia</label>
+                    <input type="number" id="formPlayerAge" min="16" max="45" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="formPlayerClub">Klub</label>
+                    <input type="text" id="formPlayerClub" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="formPlayerValue">Harga (Juta)</label>
+                    <input type="number" id="formPlayerValue" min="10" max="100" required>
+                </div>
+                
+                <input type="hidden" id="formPlayerId">
+                
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" id="cancelFormBtn">BATAL</button>
+                    <button type="submit" class="save-btn" id="savePlayerBtn">SIMPAN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-text" id="notificationText">Operasi berhasil!</div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memproses...</div>
+    </div>
+
+    <script>
+        // Data pemain lengkap dari file teks yang diberikan
+        const playersData = {
+            "GK": [
+                { name: "DE GEA", ovr: 84, age: 35, club: "Free Agent", value: 0 },
+                { name: "ROBERT SANCHEZ", ovr: 81, age: 28, club: "Chelsea", value: 0 },
+                { name: "JOAN GARCIA", ovr: 82, age: 24, club: "Espanyol", value: 0 },
+                { name: "A. ONANA", ovr: 82, age: 30, club: "Man United", value: 0 },
+                { name: "A. LUNIN", ovr: 83, age: 25, club: "Real Madrid", value: 0 },
+                { name: "D. COSTA", ovr: 84, age: 26, club: "Porto", value: 0 },
+                { name: "G. DONNARUMMA", ovr: 87, age: 26, club: "PSG", value: 0 },
+                { name: "ALISSON", ovr: 84, age: 33, club: "Liverpool", value: 0 },
+                { name: "UNAI SIMON", ovr: 84, age: 28, club: "Athletic Bilbao", value: 0 },
+                { name: "KOBEL", ovr: 85, age: 28, club: "Dortmund", value: 0 },
+                { name: "CORTORA", ovr: 87, age: 33, club: "Unknown", value: 0 },
+                { name: "S. LAMMENS", ovr: 78, age: 23, club: "Unknown", value: 0 },
+                { name: "R. SANCHEZ", ovr: 82, age: 28, club: "Chelsea", value: 0 },
+                { name: "ALISSON B.", ovr: 84, age: 33, club: "Liverpool", value: 0 },
+                { name: "PETROVIC", ovr: 82, age: 26, club: "Unknown", value: 0 },
+                { name: "C. KELLEHER", ovr: 83, age: 27, club: "Liverpool", value: 0 },
+                { name: "VERBRUGGEN", ovr: 83, age: 25, club: "Brighton", value: 0 },
+                { name: "DUBRAVKA", ovr: 81, age: 36, club: "Newcastle", value: 0 },
+                { name: "JEAN BUTEZ", ovr: 79, age: 30, club: "Unknown", value: 0 },
+                { name: "ADRIAN", ovr: 78, age: 38, club: "Liverpool", value: 0 }
+            ],
+            "RB": [
+                { name: "MAZRAOUI", ovr: 83, age: 28, club: "Bayern Munich", value: 0 },
+                { name: "J. KOUNDE", ovr: 85, age: 27, club: "Barcelona", value: 0 },
+                { name: "SACHA BOY", ovr: 81, age: 25, club: "Bayern Munich", value: 0 },
+                { name: "WESLEY", ovr: 81, age: 22, club: "Unknown", value: 0 },
+                { name: "J. TIMBER", ovr: 82, age: 24, club: "Arsenal", value: 0 },
+                { name: "P. PORRO", ovr: 84, age: 26, club: "Tottenham", value: 0 },
+                { name: "A. HAKIMI", ovr: 87, age: 27, club: "PSG", value: 0 },
+                { name: "DUMFRIES", ovr: 82, age: 29, club: "Inter", value: 0 },
+                { name: "J. FRIMPONG", ovr: 84, age: 25, club: "Leverkusen", value: 0 },
+                { name: "TAA", ovr: 87, age: 27, club: "Liverpool", value: 0 },
+                { name: "N. MAZRAOUI", ovr: 83, age: 28, club: "Bayern Munich", value: 0 },
+                { name: "R. JAMES", ovr: 82, age: 26, club: "Chelsea", value: 0 },
+                { name: "J. FRIMMPONG", ovr: 84, age: 25, club: "Leverkusen", value: 0 },
+                { name: "T. ADAMS", ovr: 81, age: 26, club: "Unknown", value: 0 },
+                { name: "A. HICKEY", ovr: 78, age: 23, club: "Brentford", value: 0 },
+                { name: "LEWIS P.", ovr: 81, age: 24, club: "Unknown", value: 0 },
+                { name: "VELTMAN", ovr: 78, age: 33, club: "Brighton", value: 0 },
+                { name: "KYLE WALKER", ovr: 83, age: 35, club: "Man City", value: 0 },
+                { name: "SERGI ROBERTO", ovr: 80, age: 33, club: "Barcelona", value: 0 },
+                { name: "YOUSUF SABALY", ovr: 79, age: 33, club: "Unknown", value: 0 }
+            ],
+            "CB": [
+                { name: "A. BASTONI", ovr: 84, age: 26, club: "Inter", value: 0 },
+                { name: "N. SCHLOTTERBACK", ovr: 83, age: 26, club: "Dortmund", value: 0 },
+                { name: "R. DIAS", ovr: 86, age: 28, club: "Man City", value: 0 },
+                { name: "R. LE NORMAND", ovr: 84, age: 29, club: "Real Sociedad", value: 0 },
+                { name: "B. DIAKETE", ovr: 80, age: 24, club: "Lille", value: 0 },
+                { name: "G. INACIO", ovr: 81, age: 24, club: "Sporting", value: 0 },
+                { name: "MURILLO", ovr: 81, age: 23, club: "Nottingham Forest", value: 0 },
+                { name: "M. GUEHI", ovr: 81, age: 25, club: "Crystal Palace", value: 0 },
+                { name: "M. SENESI", ovr: 83, age: 28, club: "Bournemouth", value: 0 },
+                { name: "M. AKANJI", ovr: 84, age: 30, club: "Man City", value: 0 },
+                { name: "G. MAGHALAES", ovr: 83, age: 28, club: "Arsenal", value: 0 },
+                { name: "KIM MIN JAE", ovr: 85, age: 29, club: "Bayern Munich", value: 0 },
+                { name: "DEAN HUIJSEN", ovr: 84, age: 20, club: "Juventus", value: 0 },
+                { name: "EDER", ovr: 85, age: 27, club: "Unknown", value: 0 },
+                { name: "L. MARTINEZ", ovr: 84, age: 27, club: "Inter", value: 0 },
+                { name: "M. DE LIGT", ovr: 84, age: 26, club: "Bayern Munich", value: 0 },
+                { name: "BADIASHILE", ovr: 79, age: 24, club: "Chelsea", value: 0 },
+                { name: "L. COLLWIL", ovr: 82, age: 22, club: "Chelsea", value: 0 },
+                { name: "I. KONATE", ovr: 86, age: 26, club: "Liverpool", value: 0 },
+                { name: "VVD", ovr: 88, age: 33, club: "Liverpool", value: 0 },
+                { name: "DUAKITE", ovr: 82, age: 28, club: "Unknown", value: 0 },
+                { name: "SENESI", ovr: 83, age: 28, club: "Bournemouth", value: 0 },
+                { name: "E. PINNOCK", ovr: 70, age: 23, club: "Brentford", value: 0 },
+                { name: "SEPP VAN", ovr: 80, age: 24, club: "Unknown", value: 0 },
+                { name: "BOSCAGLI", ovr: 81, age: 28, club: "PSV", value: 0 },
+                { name: "LEWIS DUNK", ovr: 81, age: 34, club: "Brighton", value: 0 },
+                { name: "H. EKDAL", ovr: 77, age: 27, club: "Burnley", value: 0 },
+                { name: "J. BEYER", ovr: 78, age: 25, club: "Burnley", value: 0 },
+                { name: "ALBERTO DOSENA", ovr: 77, age: 27, club: "Unknown", value: 0 },
+                { name: "OLIVER KEMPF", ovr: 79, age: 30, club: "Unknown", value: 0 },
+                { name: "NATAN", ovr: 79, age: 32, club: "Unknown", value: 0 },
+                { name: "DIEGO LLORENTE", ovr: 79, age: 32, club: "Roma", value: 0 }
+            ],
+            "LB": [
+                { name: "UDOGIE", ovr: 83, age: 23, club: "Tottenham", value: 0 },
+                { name: "NUNO MENDES", ovr: 86, age: 23, club: "PSG", value: 0 },
+                { name: "MATTEO RUGGERI", ovr: 81, age: 22, club: "Atletico Madrid", value: 0 },
+                { name: "L. HALL", ovr: 80, age: 21, club: "Newcastle", value: 0 },
+                { name: "IAN MAATSEN", ovr: 81, age: 23, club: "Chelsea", value: 0 },
+                { name: "A. GRIMALDO", ovr: 85, age: 30, club: "Leverkusen", value: 0 },
+                { name: "R. NOURI", ovr: 83, age: 24, club: "Ajax", value: 0 },
+                { name: "A. CARRERAS", ovr: 81, age: 22, club: "Man United", value: 0 },
+                { name: "MARC. CUCURELLA", ovr: 81, age: 27, club: "Chelsea", value: 0 },
+                { name: "A. CARRERAS", ovr: 81, age: 22, club: "Man United", value: 0 },
+                { name: "P. DORGU", ovr: 80, age: 21, club: "Chelsea", value: 0 },
+                { name: "M. CUCURELLA", ovr: 81, age: 27, club: "Chelsea", value: 0 },
+                { name: "M. KERKEZ", ovr: 81, age: 21, club: "Bournemouth", value: 0 },
+                { name: "TRUFFERT", ovr: 79, age: 24, club: "Rennes", value: 0 },
+                { name: "FERDI KADIOGLU", ovr: 81, age: 26, club: "Fenerbahce", value: 0 },
+                { name: "HARTMAN", ovr: 81, age: 24, club: "Feyenoord", value: 0 },
+                { name: "ALBERTO MORENO", ovr: 77, age: 33, club: "Villarreal", value: 0 },
+                { name: "ROMAIN PERRAUD", ovr: 79, age: 32, club: "Marseille", value: 0 }
+            ],
+            "CDM": [
+                { name: "M. LOCATELI", ovr: 83, age: 27, club: "Juventus", value: 0 },
+                { name: "M. CAICEDO", ovr: 85, age: 24, club: "Chelsea", value: 0 },
+                { name: "BENAT PRADOS", ovr: 80, age: 23, club: "Athletic Bilbao", value: 0 },
+                { name: "A. WHARTON", ovr: 84, age: 21, club: "Crystal Palace", value: 0 },
+                { name: "C. BALEBA", ovr: 84, age: 21, club: "Lille", value: 0 },
+                { name: "M. ZUBIMENDI", ovr: 84, age: 26, club: "Real Sociedad", value: 0 },
+                { name: "S. TONALI", ovr: 87, age: 25, club: "Newcastle", value: 0 },
+                { name: "J. KIMMICH", ovr: 85, age: 30, club: "Bayern Munich", value: 0 },
+                { name: "F. D. JONG", ovr: 85, age: 28, club: "Barcelona", value: 0 },
+                { name: "A. TCHOUMENI", ovr: 86, age: 25, club: "Real Madrid", value: 0 },
+                { name: "CASEMIRO", ovr: 81, age: 33, club: "Man United", value: 0 },
+                { name: "M. CAICEDO", ovr: 82, age: 24, club: "Chelsea", value: 0 },
+                { name: "R. GRAVENBERCH", ovr: 86, age: 23, club: "Liverpool", value: 0 },
+                { name: "LEWIS COOK", ovr: 84, age: 28, club: "Bournemouth", value: 0 },
+                { name: "J. HENDERSON", ovr: 84, age: 33, club: "Ajax", value: 0 },
+                { name: "B. BALEBA", ovr: 84, age: 21, club: "Lille", value: 0 },
+                { name: "CULLEN", ovr: 82, age: 29, club: "Burnley", value: 0 },
+                { name: "MAXIMO PERRONE", ovr: 79, age: 22, club: "Man City", value: 0 },
+                { name: "SOFYAN AMRABAT", ovr: 81, age: 29, club: "Man United", value: 0 }
+            ],
+            "CM": [
+                { name: "N. BARELLA", ovr: 85, age: 28, club: "Inter", value: 0 },
+                { name: "F. VALVERDE", ovr: 86, age: 27, club: "Real Madrid", value: 0 },
+                { name: "ENZO F.", ovr: 85, age: 24, club: "Chelsea", value: 0 },
+                { name: "E. CAMAVINGA", ovr: 88, age: 23, club: "Real Madrid", value: 0 },
+                { name: "JOELINTON", ovr: 84, age: 29, club: "Newcastle", value: 0 },
+                { name: "VITINHA", ovr: 88, age: 29, club: "PSG", value: 0 },
+                { name: "PEDRI", ovr: 90, age: 23, club: "Barcelona", value: 0 },
+                { name: "F. VALVERDE", ovr: 88, age: 27, club: "Real Madrid", value: 0 },
+                { name: "K. MAINOO", ovr: 83, age: 20, club: "Man United", value: 0 },
+                { name: "E. FERNANDEZ", ovr: 83, age: 24, club: "Chelsea", value: 0 },
+                { name: "A. MAX ALLISTER", ovr: 84, age: 27, club: "Liverpool", value: 0 },
+                { name: "R. CHRISTIE", ovr: 83, age: 30, club: "Bournemouth", value: 0 },
+                { name: "M. JANSEN", ovr: 81, age: 29, club: "Burnley", value: 0 },
+                { name: "YASIN A.", ovr: 80, age: 22, club: "Fenerbahce", value: 0 },
+                { name: "MEJBRI", ovr: 77, age: 22, club: "Sevilla", value: 0 },
+                { name: "NICO PAZ", ovr: 79, age: 21, club: "Real Madrid", value: 0 },
+                { name: "GIOVANI LO CELSO", ovr: 79, age: 29, club: "Tottenham", value: 0 }
+            ],
+            "CAM": [
+                { name: "D. DOUE", ovr: 83, age: 20, club: "Rennes", value: 0 },
+                { name: "J. MUSIALA", ovr: 86, age: 22, club: "Bayern Munich", value: 0 },
+                { name: "M. ROGERS", ovr: 81, age: 23, club: "Aston Villa", value: 0 },
+                { name: "FERMIN LOPEZ", ovr: 84, age: 22, club: "Barcelona", value: 0 },
+                { name: "ODEGAARD", ovr: 85, age: 27, club: "Arsenal", value: 0 },
+                { name: "OLMO", ovr: 86, age: 27, club: "Leipzig", value: 0 },
+                { name: "J. BELLINGHAM", ovr: 89, age: 22, club: "Real Madrid", value: 0 },
+                { name: "J. BELLINGHAM", ovr: 89, age: 22, club: "Real Madrid", value: 0 },
+                { name: "B. FERNANDEZ", ovr: 86, age: 31, club: "Benfica", value: 0 },
+                { name: "C. PALMER", ovr: 88, age: 23, club: "Chelsea", value: 0 },
+                { name: "D. SZOBOSZLAI", ovr: 85, age: 25, club: "Liverpool", value: 0 },
+                { name: "AMINE ADLI", ovr: 82, age: 25, club: "Leverkusen", value: 0 },
+                { name: "M. DAMSGAARD", ovr: 84, age: 25, club: "Brentford", value: 0 },
+                { name: "C. GRUDA", ovr: 81, age: 21, club: "Mainz", value: 0 },
+                { name: "AMDOUNI", ovr: 78, age: 25, club: "Burnley", value: 0 },
+                { name: "DELE ALLI", ovr: 77, age: 29, club: "Everton", value: 0 },
+                { name: "ISCO", ovr: 83, age: 28, club: "Real Betis", value: 0 }
+            ],
+            "RW": [
+                { name: "M. OLISE", ovr: 86, age: 23, club: "Crystal Palace", value: 0 },
+                { name: "N. MADUEKE", ovr: 81, age: 23, club: "Chelsea", value: 0 },
+                { name: "N. WILLIAMS", ovr: 85, age: 23, club: "Athletic Bilbao", value: 0 },
+                { name: "P. NETO", ovr: 84, age: 25, club: "Wolves", value: 0 },
+                { name: "SAKA", ovr: 86, age: 24, club: "Arsenal", value: 0 },
+                { name: "YAMAL", ovr: 87, age: 18, club: "Barcelona", value: 0 },
+                { name: "RODRYGO", ovr: 87, age: 24, club: "Real Madrid", value: 0 },
+                { name: "B. MBEUMO", ovr: 82, age: 26, club: "Brentford", value: 0 },
+                { name: "P. NETO", ovr: 84, age: 24, club: "Wolves", value: 0 },
+                { name: "M. SALAH", ovr: 86, age: 33, club: "Liverpool", value: 0 },
+                { name: "D. BROKS", ovr: 79, age: 28, club: "Bournemouth", value: 0 },
+                { name: "R. NELSSON", ovr: 81, age: 26, club: "Galatasaray", value: 0 },
+                { name: "Y. MINTEH", ovr: 77, age: 21, club: "Newcastle", value: 0 },
+                { name: "M. EDWARDS", ovr: 80, age: 27, club: "Sporting", value: 0 },
+                { name: "JONATHAN IKONE", ovr: 80, age: 27, club: "Fiorentina", value: 0 },
+                { name: "ANTONY", ovr: 82, age: 25, club: "Man United", value: 0 }
+            ],
+            "LW": [
+                { name: "PULISIC", ovr: 84, age: 27, club: "AC Milan", value: 0 },
+                { name: "F. CHIESA", ovr: 85, age: 28, club: "Juventus", value: 0 },
+                { name: "VINICIUS JR", ovr: 89, age: 25, club: "Real Madrid", value: 0 },
+                { name: "LUIS DIAZ", ovr: 83, age: 28, club: "Liverpool", value: 0 },
+                { name: "GARNACHO", ovr: 82, age: 21, club: "Man United", value: 0 },
+                { name: "R. LEAO", ovr: 84, age: 26, club: "AC Milan", value: 0 },
+                { name: "KVARATSKHELIA", ovr: 88, age: 24, club: "Napoli", value: 0 },
+                { name: "VINICIUS JR.", ovr: 89, age: 25, club: "Real Madrid", value: 0 },
+                { name: "M. CUNHA", ovr: 79, age: 26, club: "Wolves", value: 0 },
+                { name: "A. GARNACHO", ovr: 82, age: 21, club: "Man United", value: 0 },
+                { name: "F. WIRTZ", ovr: 80, age: 22, club: "Leverkusen", value: 0 },
+                { name: "J. KLUIVERT", ovr: 79, age: 26, club: "Bournemouth", value: 0 },
+                { name: "K. SCHADE", ovr: 83, age: 24, club: "Brentford", value: 0 },
+                { name: "K. MITOMA", ovr: 80, age: 28, club: "Brighton", value: 0 },
+                { name: "TRESOR", ovr: 79, age: 26, club: "Burnley", value: 0 },
+                { name: "ASSANE DIAO", ovr: 79, age: 20, club: "Real Betis", value: 0 },
+                { name: "ABDE EZZALZOULI", ovr: 78, age: 23, club: "Real Betis", value: 0 }
+            ],
+            "CF": [
+                { name: "R. LUKAKU", ovr: 83, age: 32, club: "Chelsea", value: 0 },
+                { name: "A. ISAK", ovr: 86, age: 26, club: "Newcastle", value: 0 },
+                { name: "J. ALVAREZ", ovr: 85, age: 24, club: "Man City", value: 0 },
+                { name: "E. HAALAND", ovr: 88, age: 25, club: "Man City", value: 0 },
+                { name: "V. OSIMHEN", ovr: 84, age: 27, club: "Napoli", value: 0 },
+                { name: "MATETA", ovr: 83, age: 28, club: "Crystal Palace", value: 0 },
+                { name: "S. GURRAISY", ovr: 84, age: 29, club: "Leipzig", value: 0 },
+                { name: "B. SESKO", ovr: 84, age: 22, club: "Leipzig", value: 0 },
+                { name: "L. MARTINEZ", ovr: 86, age: 28, club: "Inter", value: 0 },
+                { name: "LEWANDOWSKI", ovr: 88, age: 37, club: "Barcelona", value: 0 },
+                { name: "K. MBAPPE", ovr: 91, age: 27, club: "PSG", value: 0 },
+                { name: "B. SESKO", ovr: 84, age: 22, club: "Leipzig", value: 0 },
+                { name: "J. PEDRO", ovr: 84, age: 24, club: "Brighton", value: 0 },
+                { name: "A. ISAK", ovr: 87, age: 26, club: "Newcastle", value: 0 },
+                { name: "ENES UNAL", ovr: 83, age: 28, club: "Bournemouth", value: 0 },
+                { name: "I. THIAGO", ovr: 78, age: 24, club: "Unknown", value: 0 },
+                { name: "G. RUTTER", ovr: 83, age: 23, club: "Leeds", value: 0 },
+                { name: "A. BROJA", ovr: 79, age: 25, club: "Fulham", value: 0 },
+                { name: "A. MORATA", ovr: 83, age: 33, club: "Atletico Madrid", value: 0 },
+                { name: "CUCHO HERNANDEZ", ovr: 80, age: 24, club: "Getafe", value: 0 }
+            ]
+        };
+
+        // Position information
+        const positions = [
+            { id: "GK", name: "Kiper", desc: "Penjaga gawang, pertahanan terakhir", icon: "fa-hand-paper", count: 0 },
+            { id: "RB", name: "Bek Kanan", desc: "Pemain bertahan sisi kanan", icon: "fa-arrow-right", count: 0 },
+            { id: "CB", name: "Bek Tengah", desc: "Pemain bertahan tengah", icon: "fa-arrows-alt-h", count: 0 },
+            { id: "LB", name: "Bek Kiri", desc: "Pemain bertahan sisi kiri", icon: "fa-arrow-left", count: 0 },
+            { id: "CDM", name: "Gelandang Bertahan", desc: "Gelandang yang lebih fokus bertahan", icon: "fa-shield-alt", count: 0 },
+            { id: "CM", name: "Gelandang Tengah", desc: "Gelandang serba bisa di tengah lapangan", icon: "fa-compress-alt", count: 0 },
+            { id: "CAM", name: "Gelandang Serang", desc: "Gelandang yang fokus menyerang", icon: "fa-bullseye", count: 0 },
+            { id: "RW", name: "Sayap Kanan", desc: "Penyerang sisi kanan", icon: "fa-running", count: 0 },
+            { id: "LW", name: "Sayap Kiri", desc: "Penyerang sisi kiri", icon: "fa-running", count: 0 },
+            { id: "CF", name: "Striker", desc: "Penyerang tengah, pencetak gol", icon: "fa-futbol", count: 0 }
+        ];
+
+        // Club players storage
+        let myClubPlayers = JSON.parse(localStorage.getItem('myClubPlayers')) || [];
+        let editPlayerId = null;
+        let currentPosition = null;
+        let searchTerm = "";
+        let priceFilter = "all";
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Calculate prices for all players based on the formula
+            calculatePlayerPrices();
+            
+            // Count players in each position
+            countPlayersByPosition();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Check if user is already logged in
+            checkLoginStatus();
+            
+            // Initialize club stats
+            updateClubStats();
+            
+            // Render club players
+            renderClubPlayers();
+        }
+
+        function calculatePlayerPrices() {
+            // Formula sesuai permintaan:
+            // Pemain usia 20-29 th dengan ovr kurang dari 80 maka harganya 30 juta
+            // Pemain usia 20-29 th dengan ovr 80-85 berikan harga 35 juta
+            // Pemain usia 20-29 dengan ovr 85-89 berikan harga 40 juta
+            // Pemain dengan usia 20-29 dengan ovr di atas 90 berikan harga 45 juta
+            // Untuk pemain usia di atas 30 dengan ovr di bawah 80 berikan harga 25 juta
+            // ovr 80-89 30 juta, di atas 90 35 juta
+            
+            for (const position in playersData) {
+                playersData[position].forEach(player => {
+                    if (player.age >= 20 && player.age <= 29) {
+                        if (player.ovr < 80) {
+                            player.value = 30;
+                        } else if (player.ovr >= 80 && player.ovr <= 85) {
+                            player.value = 35;
+                        } else if (player.ovr >= 86 && player.ovr <= 89) {
+                            player.value = 40;
+                        } else if (player.ovr >= 90) {
+                            player.value = 45;
+                        }
+                    } else if (player.age > 30) {
+                        if (player.ovr < 80) {
+                            player.value = 25;
+                        } else if (player.ovr >= 80 && player.ovr <= 89) {
+                            player.value = 30;
+                        } else if (player.ovr >= 90) {
+                            player.value = 35;
+                        }
+                    } else {
+                        // For players under 20 (18-19)
+                        if (player.ovr < 80) {
+                            player.value = 30;
+                        } else if (player.ovr >= 80 && player.ovr <= 85) {
+                            player.value = 35;
+                        } else if (player.ovr >= 86) {
+                            player.value = 40;
+                        }
+                    }
+                });
+            }
+        }
+
+        function countPlayersByPosition() {
+            positions.forEach(pos => {
+                pos.count = playersData[pos.id] ? playersData[pos.id].length : 0;
+            });
+        }
+
+        function setupEventListeners() {
+            // Login form
+            const loginForm = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            loginForm.addEventListener('submit', handleLogin);
+            togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Add Enter key support for login
+            passwordInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    handleLogin(event);
+                }
+            });
+            
+            // Modal close buttons
+            document.getElementById('closePlayersModal').addEventListener('click', closePlayersModal);
+            document.getElementById('cancelFormBtn').addEventListener('click', closePlayerForm);
+            
+            // Add player button
+            document.getElementById('addPlayerBtn').addEventListener('click', openAddPlayerForm);
+            
+            // Player form submission
+            document.getElementById('playerForm').addEventListener('submit', handlePlayerFormSubmit);
+            
+            // Close modals when clicking outside
+            document.getElementById('playersModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePlayersModal();
+                }
+            });
+            
+            document.getElementById('playerFormModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePlayerForm();
+                }
+            });
+            
+            // Search functionality
+            document.getElementById('playerSearch').addEventListener('input', function(e) {
+                searchTerm = e.target.value.toLowerCase();
+                renderPlayersInModal();
+            });
+            
+            document.getElementById('clubSearch').addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                filterClubPlayers(term);
+            });
+            
+            // Price filter buttons
+            document.querySelectorAll('#priceFilters .filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#priceFilters .filter-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    priceFilter = this.dataset.filter;
+                    renderPlayersInModal();
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                showDashboard();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Check if password matches (case insensitive)
+            const correctPassword = "Hala Madrid";
+            if (password.toLowerCase() === correctPassword.toLowerCase()) {
+                // Successful login
+                localStorage.setItem('isLoggedIn', 'true');
+                showDashboard();
+                showNotification("Login berhasil! Selamat datang di Transfer Market Option.", "success");
+            } else {
+                // Failed login
+                errorMessage.textContent = "Sandi salah! Coba lagi.";
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+                
+                // Shake animation for error
+                const loginBox = document.querySelector('.login-box');
+                loginBox.style.animation = 'none';
+                setTimeout(() => {
+                    loginBox.style.animation = 'slideUp 0.5s ease-out, shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        loginBox.style.animation = 'slideUp 0.5s ease-out';
+                    }, 500);
+                }, 10);
+                
+                // Add shake animation to CSS
+                if (!document.querySelector('#shake-animation')) {
+                    const style = document.createElement('style');
+                    style.id = 'shake-animation';
+                    style.textContent = `
+                        @keyframes shake {
+                            0%, 100% { transform: translateX(0); }
+                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                            20%, 40%, 60%, 80% { transform: translateX(5px); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('#togglePassword i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('isLoggedIn');
+            showLoginPage();
+            showNotification("Anda telah keluar dari sistem.", "info");
+        }
+
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+            // Render position cards
+            renderPositionCards();
+        }
+
+        function renderPositionCards() {
+            const marketSelector = document.getElementById('marketSelector');
+            marketSelector.innerHTML = '';
+            
+            positions.forEach((position, index) => {
+                const card = document.createElement('div');
+                card.className = 'position-card slide-in-left';
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.dataset.position = position.id;
+                
+                card.innerHTML = `
+                    <div class="position-header">
+                        <div class="position-title">${position.name}</div>
+                        <div class="position-count">${position.count} pemain</div>
+                    </div>
+                    <div class="position-desc">${position.desc}</div>
+                    <div class="position-icon">
+                        <i class="fas ${position.icon}"></i>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openPlayersModal(position.id, position.name));
+                marketSelector.appendChild(card);
+            });
+            
+            // Add keyboard navigation for position cards
+            setupPositionCardsNavigation();
+        }
+
+        function setupPositionCardsNavigation() {
+            const positionCards = document.querySelectorAll('.position-card');
+            
+            positionCards.forEach((card, index) => {
+                card.setAttribute('tabindex', '0');
+                
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        this.click();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextCard = positionCards[index + 1] || positionCards[0];
+                        nextCard.focus();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevCard = positionCards[index - 1] || positionCards[positionCards.length - 1];
+                        prevCard.focus();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const addPlayerBtn = document.getElementById('addPlayerBtn');
+                        if (addPlayerBtn) addPlayerBtn.focus();
+                    }
+                });
+            });
+        }
+
+        function openPlayersModal(positionId, positionName) {
+            currentPosition = positionId;
+            const modal = document.getElementById('playersModal');
+            const modalTitle = document.getElementById('modalPositionTitle');
+            
+            modalTitle.textContent = `${positionName} - Daftar Pemain`;
+            
+            // Reset search and filter
+            document.getElementById('playerSearch').value = '';
+            searchTerm = "";
+            document.querySelectorAll('#priceFilters .filter-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            document.querySelector('#priceFilters .filter-btn[data-filter="all"]').classList.add('active');
+            priceFilter = "all";
+            
+            // Render players
+            renderPlayersInModal();
+            
+            // Show modal
+            modal.style.display = 'flex';
+            
+            // Focus on search input
+            document.getElementById('playerSearch').focus();
+        }
+
+        function renderPlayersInModal() {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = '';
+            
+            if (!currentPosition || !playersData[currentPosition]) {
+                playersGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: var(--text-secondary); grid-column: 1 / -1;">Tidak ada pemain untuk posisi ini.</div>';
+                return;
+            }
+            
+            let players = playersData[currentPosition];
+            
+            // Apply search filter
+            if (searchTerm) {
+                players = players.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm) || 
+                    player.club.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Apply price filter
+            if (priceFilter !== "all") {
+                players = players.filter(player => {
+                    switch(priceFilter) {
+                        case "20-30": return player.value >= 20 && player.value <= 30;
+                        case "30-35": return player.value >= 30 && player.value <= 35;
+                        case "35-40": return player.value >= 35 && player.value <= 40;
+                        case "40+": return player.value >= 40;
+                        default: return true;
+                    }
+                });
+            }
+            
+            if (players.length === 0) {
+                playersGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: var(--text-secondary); grid-column: 1 / -1;">Tidak ada pemain yang sesuai dengan filter.</div>';
+                return;
+            }
+            
+            players.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card slide-in-right';
+                playerCard.style.animationDelay = `${index * 0.05}s`;
+                
+                playerCard.innerHTML = `
+                    <div class="player-header">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-ovr">${player.ovr}</div>
+                    </div>
+                    <div class="player-details">
+                        <div class="player-age">Usia: ${player.age} tahun</div>
+                        <div class="player-club">${player.club}</div>
+                    </div>
+                    <div class="player-price">${player.value} JT</div>
+                    <div class="player-actions">
+                        <button class="buy-btn" data-player='${JSON.stringify(player)}' data-position='${currentPosition}'>
+                            <i class="fas fa-shopping-cart"></i> BELI
+                        </button>
+                        <button class="add-to-club-btn" data-player='${JSON.stringify(player)}' data-position='${currentPosition}'>
+                            <i class="fas fa-plus"></i> TAMBAH KE KLUB
+                        </button>
+                    </div>
+                `;
+                
+                playersGrid.appendChild(playerCard);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.buy-btn').forEach(btn => {
+                btn.addEventListener('click', handleBuyPlayer);
+            });
+            
+            document.querySelectorAll('.add-to-club-btn').forEach(btn => {
+                btn.addEventListener('click', handleAddToClub);
+            });
+            
+            // Setup keyboard navigation for player cards
+            setupPlayerCardsNavigation();
+        }
+
+        function closePlayersModal() {
+            document.getElementById('playersModal').style.display = 'none';
+            currentPosition = null;
+        }
+
+        function handleBuyPlayer(e) {
+            const playerData = JSON.parse(e.target.dataset.player);
+            const position = e.target.dataset.position;
+            
+            showNotification(`Membeli ${playerData.name} seharga ${playerData.value} JT...`, "info");
+            
+            // Simulate buying process
+            setTimeout(() => {
+                showNotification(`Berhasil membeli ${playerData.name} seharga ${playerData.value} JT!`, "success");
+            }, 1000);
+        }
+
+        function handleAddToClub(e) {
+            const playerData = JSON.parse(e.target.dataset.player);
+            const position = e.target.dataset.position;
+            
+            // Check if player already in club
+            const existingPlayer = myClubPlayers.find(p => 
+                p.name === playerData.name && p.position === position
+            );
+            
+            if (existingPlayer) {
+                showNotification(`${playerData.name} sudah ada di klub Anda!`, "error");
+                return;
+            }
+            
+            // Generate unique ID for the player
+            const playerId = Date.now() + Math.floor(Math.random() * 1000);
+            
+            const newPlayer = {
+                id: playerId,
+                name: playerData.name,
+                position: position,
+                ovr: playerData.ovr,
+                age: playerData.age,
+                club: playerData.club,
+                value: playerData.value
+            };
+            
+            // Add to club
+            myClubPlayers.push(newPlayer);
+            localStorage.setItem('myClubPlayers', JSON.stringify(myClubPlayers));
+            
+            // Update UI
+            updateClubStats();
+            renderClubPlayers();
+            
+            showNotification(`${playerData.name} telah ditambahkan ke klub Anda!`, "success");
+        }
+
+        function openAddPlayerForm() {
+            editPlayerId = null;
+            document.getElementById('formModalTitle').textContent = "TAMBAH PEMAIN BARU";
+            document.getElementById('playerForm').reset();
+            document.getElementById('formPlayerId').value = '';
+            document.getElementById('playerFormModal').style.display = 'flex';
+            
+            // Auto-calculate value based on age and OVR
+            document.getElementById('formPlayerAge').addEventListener('input', autoCalculateValue);
+            document.getElementById('formPlayerOVR').addEventListener('input', autoCalculateValue);
+            
+            // Focus on first input
+            document.getElementById('formPlayerName').focus();
+        }
+
+        function openEditPlayerForm(playerId) {
+            const player = myClubPlayers.find(p => p.id === playerId);
+            if (!player) return;
+            
+            editPlayerId = playerId;
+            document.getElementById('formModalTitle').textContent = "EDIT DATA PEMAIN";
+            document.getElementById('formPlayerName').value = player.name;
+            document.getElementById('formPlayerPosition').value = player.position;
+            document.getElementById('formPlayerOVR').value = player.ovr;
+            document.getElementById('formPlayerAge').value = player.age;
+            document.getElementById('formPlayerClub').value = player.club;
+            document.getElementById('formPlayerValue').value = player.value;
+            document.getElementById('formPlayerId').value = player.id;
+            document.getElementById('playerFormModal').style.display = 'flex';
+            
+            // Auto-calculate value based on age and OVR
+            document.getElementById('formPlayerAge').addEventListener('input', autoCalculateValue);
+            document.getElementById('formPlayerOVR').addEventListener('input', autoCalculateValue);
+            
+            // Focus on first input
+            document.getElementById('formPlayerName').focus();
+        }
+
+        function autoCalculateValue() {
+            const age = parseInt(document.getElementById('formPlayerAge').value) || 0;
+            const ovr = parseInt(document.getElementById('formPlayerOVR').value) || 0;
+            
+            if (age >= 20 && age <= 29) {
+                if (ovr < 80) {
+                    document.getElementById('formPlayerValue').value = 30;
+                } else if (ovr >= 80 && ovr <= 85) {
+                    document.getElementById('formPlayerValue').value = 35;
+                } else if (ovr >= 86 && ovr <= 89) {
+                    document.getElementById('formPlayerValue').value = 40;
+                } else if (ovr >= 90) {
+                    document.getElementById('formPlayerValue').value = 45;
+                }
+            } else if (age > 30) {
+                if (ovr < 80) {
+                    document.getElementById('formPlayerValue').value = 25;
+                } else if (ovr >= 80 && ovr <= 89) {
+                    document.getElementById('formPlayerValue').value = 30;
+                } else if (ovr >= 90) {
+                    document.getElementById('formPlayerValue').value = 35;
+                }
+            } else {
+                // For players under 20
+                if (ovr < 80) {
+                    document.getElementById('formPlayerValue').value = 30;
+                } else if (ovr >= 80 && ovr <= 85) {
+                    document.getElementById('formPlayerValue').value = 35;
+                } else if (ovr >= 86) {
+                    document.getElementById('formPlayerValue').value = 40;
+                }
+            }
+        }
+
+        function closePlayerForm() {
+            document.getElementById('playerFormModal').style.display = 'none';
+            
+            // Remove event listeners
+            document.getElementById('formPlayerAge').removeEventListener('input', autoCalculateValue);
+            document.getElementById('formPlayerOVR').removeEventListener('input', autoCalculateValue);
+        }
+
+        function handlePlayerFormSubmit(e) {
+            e.preventDefault();
+            
+            const playerId = document.getElementById('formPlayerId').value;
+            const playerName = document.getElementById('formPlayerName').value.trim();
+            const playerPosition = document.getElementById('formPlayerPosition').value;
+            const playerOVR = parseInt(document.getElementById('formPlayerOVR').value);
+            const playerAge = parseInt(document.getElementById('formPlayerAge').value);
+            const playerClub = document.getElementById('formPlayerClub').value.trim();
+            const playerValue = parseInt(document.getElementById('formPlayerValue').value);
+            
+            if (!playerName || !playerPosition || !playerClub) {
+                showNotification("Harap isi semua bidang!", "error");
+                return;
+            }
+            
+            if (editPlayerId) {
+                // Edit existing player
+                const index = myClubPlayers.findIndex(p => p.id === parseInt(playerId));
+                if (index !== -1) {
+                    myClubPlayers[index] = {
+                        id: parseInt(playerId),
+                        name: playerName,
+                        position: playerPosition,
+                        ovr: playerOVR,
+                        age: playerAge,
+                        club: playerClub,
+                        value: playerValue
+                    };
+                    
+                    showNotification(`Berhasil mengedit data ${playerName}!`, "success");
+                }
+            } else {
+                // Add new player
+                const newPlayerId = Date.now() + Math.floor(Math.random() * 1000);
+                const newPlayer = {
+                    id: newPlayerId,
+                    name: playerName,
+                    position: playerPosition,
+                    ovr: playerOVR,
+                    age: playerAge,
+                    club: playerClub,
+                    value: playerValue
+                };
+                
+                myClubPlayers.push(newPlayer);
+                showNotification(`Berhasil menambahkan ${playerName} ke klub!`, "success");
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('myClubPlayers', JSON.stringify(myClubPlayers));
+            
+            // Update UI
+            updateClubStats();
+            renderClubPlayers();
+            
+            // Close form
+            closePlayerForm();
+        }
+
+        function deletePlayer(playerId) {
+            const player = myClubPlayers.find(p => p.id === playerId);
+            if (!player) return;
+            
+            if (confirm(`Apakah Anda yakin ingin menghapus ${player.name} dari klub?`)) {
+                myClubPlayers = myClubPlayers.filter(p => p.id !== playerId);
+                localStorage.setItem('myClubPlayers', JSON.stringify(myClubPlayers));
+                
+                updateClubStats();
+                renderClubPlayers();
+                
+                showNotification(`Berhasil menghapus ${player.name} dari klub!`, "success");
+            }
+        }
+
+        function renderClubPlayers() {
+            const clubPlayersContainer = document.getElementById('clubPlayers');
+            const searchTerm = document.getElementById('clubSearch').value.toLowerCase();
+            
+            let filteredPlayers = myClubPlayers;
+            
+            if (searchTerm) {
+                filteredPlayers = myClubPlayers.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm) ||
+                    player.position.toLowerCase().includes(searchTerm) ||
+                    player.club.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            clubPlayersContainer.innerHTML = '';
+            
+            if (filteredPlayers.length === 0) {
+                const noPlayersMessage = searchTerm ? 
+                    'Tidak ada pemain yang sesuai dengan pencarian.' : 
+                    'Belum ada pemain di klub Anda. Tambahkan pemain dari pasar transfer atau buat pemain baru.';
+                    
+                clubPlayersContainer.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: var(--text-secondary); grid-column: 1 / -1;">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 20px; color: var(--accent);"></i>
+                        <h3 style="margin-bottom: 10px;">${searchTerm ? 'Hasil Pencarian' : 'Klub Kosong'}</h3>
+                        <p>${noPlayersMessage}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredPlayers.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'club-player-card slide-in-left';
+                playerCard.style.animationDelay = `${index * 0.05}s`;
+                
+                // Get position name
+                const positionInfo = positions.find(p => p.id === player.position);
+                const positionName = positionInfo ? positionInfo.name : player.position;
+                
+                playerCard.innerHTML = `
+                    <div class="club-player-header">
+                        <div class="club-player-name">${player.name}</div>
+                        <div class="club-player-position">${positionName}</div>
+                    </div>
+                    <div class="club-player-details">
+                        <div class="club-player-ovr">OVR: ${player.ovr}</div>
+                        <div class="club-player-age">Usia: ${player.age} tahun</div>
+                        <div class="club-player-value">Nilai: ${player.value} JT</div>
+                        <div class="club-player-club">${player.club}</div>
+                    </div>
+                    <div class="club-player-actions">
+                        <button class="edit-btn" data-id="${player.id}">
+                            <i class="fas fa-edit"></i> EDIT
+                        </button>
+                        <button class="delete-btn" data-id="${player.id}">
+                            <i class="fas fa-trash"></i> HAPUS
+                        </button>
+                    </div>
+                `;
+                
+                clubPlayersContainer.appendChild(playerCard);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const playerId = parseInt(this.dataset.id);
+                    openEditPlayerForm(playerId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const playerId = parseInt(this.dataset.id);
+                    deletePlayer(playerId);
+                });
+            });
+            
+            // Setup keyboard navigation for club players
+            setupClubPlayersNavigation();
+        }
+
+        function filterClubPlayers(term) {
+            renderClubPlayers();
+        }
+
+        function setupClubPlayersNavigation() {
+            const clubPlayerCards = document.querySelectorAll('.club-player-card');
+            
+            clubPlayerCards.forEach((card, index) => {
+                card.setAttribute('tabindex', '0');
+                
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        // Focus on first button (edit)
+                        const editBtn = this.querySelector('.edit-btn');
+                        if (editBtn) editBtn.focus();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextCard = clubPlayerCards[index + 1] || clubPlayerCards[0];
+                        nextCard.focus();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevCard = clubPlayerCards[index - 1] || clubPlayerCards[clubPlayerCards.length - 1];
+                        prevCard.focus();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        // Move to next row (for grid layout)
+                        const nextRowIndex = index + 2; // Assuming 2 columns
+                        if (nextRowIndex < clubPlayerCards.length) {
+                            clubPlayerCards[nextRowIndex].focus();
+                        } else {
+                            // If at bottom, go to first card
+                            clubPlayerCards[0].focus();
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        // Move to previous row
+                        const prevRowIndex = index - 2;
+                        if (prevRowIndex >= 0) {
+                            clubPlayerCards[prevRowIndex].focus();
+                        } else {
+                            // If at top, go to last card
+                            clubPlayerCards[clubPlayerCards.length - 1].focus();
+                        }
+                    }
+                });
+                
+                // Handle button navigation inside cards
+                const buttons = card.querySelectorAll('button');
+                buttons.forEach((btn, btnIndex) => {
+                    btn.addEventListener('keydown', function(e) {
+                        if (e.key === 'ArrowRight') {
+                            e.preventDefault();
+                            const nextBtn = buttons[btnIndex + 1];
+                            if (nextBtn) {
+                                nextBtn.focus();
+                            } else {
+                                // If last button, go to next card
+                                const nextCard = clubPlayerCards[index + 1] || clubPlayerCards[0];
+                                nextCard.focus();
+                            }
+                        } else if (e.key === 'ArrowLeft') {
+                            e.preventDefault();
+                            const prevBtn = buttons[btnIndex - 1];
+                            if (prevBtn) {
+                                prevBtn.focus();
+                            } else {
+                                // If first button, go to card itself
+                                card.focus();
+                            }
+                        } else if (e.key === 'Escape') {
+                            card.focus();
+                        }
+                    });
+                });
+            });
+        }
+
+        function setupPlayerCardsNavigation() {
+            const playerCards = document.querySelectorAll('.player-card');
+            
+            playerCards.forEach((card, index) => {
+                card.setAttribute('tabindex', '0');
+                
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        // Focus on first button (buy)
+                        const buyBtn = this.querySelector('.buy-btn');
+                        if (buyBtn) buyBtn.focus();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextCard = playerCards[index + 1] || playerCards[0];
+                        nextCard.focus();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevCard = playerCards[index - 1] || playerCards[playerCards.length - 1];
+                        prevCard.focus();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        // Move to next row (for grid layout)
+                        const nextRowIndex = index + 2; // Assuming 2 columns
+                        if (nextRowIndex < playerCards.length) {
+                            playerCards[nextRowIndex].focus();
+                        } else {
+                            // If at bottom, go to first card
+                            playerCards[0].focus();
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        // Move to previous row
+                        const prevRowIndex = index - 2;
+                        if (prevRowIndex >= 0) {
+                            playerCards[prevRowIndex].focus();
+                        } else {
+                            // If at top, go to last card
+                            playerCards[playerCards.length - 1].focus();
+                        }
+                    }
+                });
+                
+                // Handle button navigation inside cards
+                const buttons = card.querySelectorAll('button');
+                buttons.forEach((btn, btnIndex) => {
+                    btn.addEventListener('keydown', function(e) {
+                        if (e.key === 'ArrowRight') {
+                            e.preventDefault();
+                            const nextBtn = buttons[btnIndex + 1];
+                            if (nextBtn) {
+                                nextBtn.focus();
+                            } else {
+                                // If last button, go to next card
+                                const nextCard = playerCards[index + 1] || playerCards[0];
+                                nextCard.focus();
+                            }
+                        } else if (e.key === 'ArrowLeft') {
+                            e.preventDefault();
+                            const prevBtn = buttons[btnIndex - 1];
+                            if (prevBtn) {
+                                prevBtn.focus();
+                            } else {
+                                // If first button, go to card itself
+                                card.focus();
+                            }
+                        } else if (e.key === 'Escape') {
+                            card.focus();
+                        }
+                    });
+                });
+            });
+        }
+
+        function updateClubStats() {
+            const totalPlayers = myClubPlayers.length;
+            const totalValue = myClubPlayers.reduce((sum, player) => sum + player.value, 0);
+            const avgOVR = totalPlayers > 0 ? 
+                Math.round(myClubPlayers.reduce((sum, player) => sum + player.ovr, 0) / totalPlayers) : 0;
+            
+            document.getElementById('totalPlayers').textContent = totalPlayers;
+            document.getElementById('totalValue').textContent = totalValue;
+            document.getElementById('avgOVR').textContent = avgOVR;
+        }
+
+        function showNotification(message, type = "info") {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notification.className = `notification ${type}`;
+            notificationText.textContent = message;
+            
+            // Set appropriate icon
+            const icon = notification.querySelector('.notification-icon i');
+            if (type === "success") {
+                icon.className = "fas fa-check-circle";
+            } else if (type === "error") {
+                icon.className = "fas fa-exclamation-circle";
+            } else {
+                icon.className = "fas fa-info-circle";
+            }
+            
+            notification.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        function handleKeyboardShortcuts(e) {
+            // Only handle shortcuts when on dashboard
+            if (document.getElementById('dashboard').style.display !== 'block') return;
+            
+            // Ctrl+Shift+L to logout
+            if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                e.preventDefault();
+                handleLogout();
+            }
+            
+            // Ctrl+Shift+A to add player
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                openAddPlayerForm();
+            }
+            
+            // Ctrl+F to focus search in modal if open
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                if (document.getElementById('playersModal').style.display === 'flex') {
+                    document.getElementById('playerSearch').focus();
+                } else {
+                    document.getElementById('clubSearch').focus();
+                }
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                if (document.getElementById('playersModal').style.display === 'flex') {
+                    closePlayersModal();
+                }
+                if (document.getElementById('playerFormModal').style.display === 'flex') {
+                    closePlayerForm();
+                }
+            }
+            
+            // Tab navigation enhancement
+            if (e.key === 'Tab') {
+                // Find all focusable elements
+                const focusableElements = document.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                // If shift+tab on first element, go to last
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                } 
+                // If tab on last element, go to first
+                else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        }
+
+        // Initialize some sample club players if empty
+        if (myClubPlayers.length === 0) {
+            // Add a few sample players to club
+            myClubPlayers = [
+                {
+                    id: 1,
+                    name: "K. MBAPPE",
+                    position: "CF",
+                    ovr: 91,
+                    age: 27,
+                    club: "PSG",
+                    value: 45
+                },
+                {
+                    id: 2,
+                    name: "VINICIUS JR",
+                    position: "LW",
+                    ovr: 89,
+                    age: 25,
+                    club: "Real Madrid",
+                    value: 40
+                },
+                {
+                    id: 3,
+                    name: "J. BELLINGHAM",
+                    position: "CAM",
+                    ovr: 89,
+                    age: 22,
+                    club: "Real Madrid",
+                    value: 40
+                }
+            ];
+            localStorage.setItem('myClubPlayers', JSON.stringify(myClubPlayers));
+        }
+
+        // Add some extra CSS for enhanced visuals
+        const extraCSS = `
+            .glow-effect {
+                position: relative;
+            }
+            
+            .glow-effect::after {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, var(--accent), #ff00ff, var(--accent));
+                border-radius: inherit;
+                z-index: -1;
+                filter: blur(5px);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            
+            .glow-effect:hover::after {
+                opacity: 0.7;
+            }
+            
+            .pulse {
+                animation: pulse 2s infinite;
+            }
+            
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+            }
+            
+            .float {
+                animation: float 6s ease-in-out infinite;
+            }
+            
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+                100% { transform: translateY(0px); }
+            }
+        `;
+        
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = extraCSS;
+        document.head.appendChild(styleSheet);
+
+        // Add some floating elements for futuristic effect
+        function createFloatingElements() {
+            const container = document.body;
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.style.position = 'fixed';
+                element.style.width = Math.random() * 10 + 5 + 'px';
+                element.style.height = Math.random() * 10 + 5 + 'px';
+                element.style.background = `rgba(0, 212, 255, ${Math.random() * 0.3 + 0.1})`;
+                element.style.borderRadius = '50%';
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.top = Math.random() * 100 + 'vh';
+                element.style.zIndex = '-1';
+                element.style.animation = `float ${Math.random() * 10 + 10}s ease-in-out infinite`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+                
+                container.appendChild(element);
+            }
+        }
+
+        // Initialize floating elements
+        createFloatingElements();
+        
+        // Show welcome message
+        setTimeout(() => {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                showNotification("Selamat datang! Gunakan Ctrl+F untuk mencari pemain.", "info");
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
